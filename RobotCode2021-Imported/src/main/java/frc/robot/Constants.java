@@ -196,9 +196,9 @@ public final class Constants {
   }
 
   public static final class Vision {
-    public static final double kCameraHeight = 0.23; // meter -- REMEASURE
-    public static final double kCameraPitch = 0.436; // radians
-    public static final double kTargetHeight = 2.06; // meters 
+    public static final double kCameraHeight = 0.5461; // meter -- REMEASURE
+    public static final double kCameraPitch = 1.249; // radians
+    public static final double kTargetHeight = 2.49555 / 2; // meters 
     
     public static final double turretKP = 0;
     public static final double turretKI = 0;

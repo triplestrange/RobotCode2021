@@ -9,6 +9,8 @@ package frc.robot;
 
 import java.util.List;
 
+import org.photonvision.PhotonCamera;
+
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -49,8 +51,9 @@ public class RobotContainer {
     private final Conveyor conveyor = new Conveyor();
     public final static Shooter shooter = new Shooter();
     private final Climb climb = new Climb();
-    public final Vision vision = new Vision();
-    private final Turret turret = new Turret(vision, swerveDrive);
+    private final PhotonCamera camera = new PhotonCamera("TurretCamera");
+    private final Vision vision = new Vision(camera);
+    private final Turret turret = new Turret(swerveDrive);
 
     // The driver's controller
     public static Joystick m_driverController = new Joystick(OIConstants.kDriverControllerPort);
@@ -70,19 +73,7 @@ public class RobotContainer {
      * The container for the robot. Contains subsystems, OI devices, and commands.
      */
     public RobotContainer() {
-        // Gets the default instance of NetworkTables
-        NetworkTableInstance table = NetworkTableInstance.getDefault();
-
-        // Gets the MyCamName table under the chamelon-vision table
-        // MyCamName will vary depending on the name of your camera
-        NetworkTable cameraTable = table.getTable("chameleon-vision").getSubTable("Shooter");
-
-        // Gets the yaw to the target from the cameraTable
-        yaw = cameraTable.getEntry("yaw");
-
-        // Gets the driveMode boolean from the cameraTable
-        isDriverMode = cameraTable.getEntry("driver_mode");
-
+       
         // Configure the button bindings
         configureButtonBindings();
 
@@ -92,16 +83,6 @@ public class RobotContainer {
         conveyor.setDefaultCommand(new AutoIndexConveyor(conveyor));
         intake.setDefaultCommand(new RunIntake(intake, m_operatorController));
         turret.setDefaultCommand(new SpinTurret(turret, false, 0));
-       
-        // vision.setDefaultCommand(new RunCommand(vision::runVision, vision));
-
-    //     swerveDrive.setDefaultCommand(
-
-    //                             new InstantCommand(() -> swerveDrive.drive(-m_driverController.getRawAxis(1)
-    //                                             * Constants.SwerveDriveConstants.kMaxSpeedMetersPerSecond,
-    //                                             -m_driverController.getRawAxis(0)
-    //                                                             * Constants.SwerveDriveConstants.kMaxSpeedMetersPerSecond,
-    //                                             -m_driverController.getRawAxis(4) * (2 * Math.PI), true), swerveDrive));
     }
 
     /**

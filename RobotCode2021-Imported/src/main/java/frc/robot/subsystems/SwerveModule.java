@@ -145,4 +145,10 @@ public class SwerveModule {
     m_turningEncoder.setPosition(0);
   }
 
+  /**
+   * Physically zeroes wheel. (i hope)
+   */
+  public void resetWheel() {
+    m_pidController.setReference(0, ControlType.kPosition);
+  }
 }

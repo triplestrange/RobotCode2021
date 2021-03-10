@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
+import frc.robot.commands.SpinTurret;
 
 
 public class Turret extends Subsystem {
@@ -34,15 +35,15 @@ public class Turret extends Subsystem {
   public double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput, setPoint, rotations;
   private CANDigitalInput m_reverseLimit;
   private DigitalInput limitSwitch;
-  public Vision vision;
+  // public Vision vision;
   public SwerveDrive swerve;
   
   private PIDController visionController = new PIDController(Constants.Vision.turretKP, Constants.Vision.turretKI, Constants.Vision.turretKD);
   /**
    * Creates a new Turret.
    */
-  public Turret(Vision vision, SwerveDrive swerve) {
-    this.vision = vision;
+  public Turret(SwerveDrive swerve) {
+    // this.vision = vision;
     this.swerve = swerve;
 
     turretMotor = new CANSparkMax(motor, MotorType.kBrushless);
@@ -118,7 +119,8 @@ public class Turret extends Subsystem {
       turretMotor.set(speed);
      else
       // turretMotor.set(0);
-        m_turretPIDController.setReference(targetPosition, ControlType.kPosition);
+      setPosition(targetPosition);
+        // m_turretPIDController.setReference(targetPosition, ControlType.kPosition);
   }
 
   @Override

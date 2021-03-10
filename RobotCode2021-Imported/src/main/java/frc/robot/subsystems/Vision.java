@@ -1,113 +1,107 @@
-package frc.robot.subsystems;
+// Copyright (c) FIRST and other WPILib contributors.
+// Open Source Software; you can modify and/or share it under the terms of
+// the WPILib BSD license file in the root directory of this project.
 
-import frc.robot.Robot;
-import frc.robot.Constants;
-import frc.robot.RobotContainer;
-import frc.robot.subsystems.SwerveDrive;
+package frc.robot.subsystems;
 
 import java.util.List;
 
-import org.photonvision.PhotonCamera;
-// import org.photonvision.PhotonCamera2;
-// import org.photonvision.PhotonCamera.SimplePipelineResult;
-import org.photonvision.PhotonPipelineResult;
-import org.photonvision.PhotonTrackedTarget;
-import org.photonvision.PhotonUtils;
+import org.photonvision.*;
 
-import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Subsystem;
-import edu.wpi.first.wpilibj.geometry.Pose2d;
-import edu.wpi.first.wpilibj.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.geometry.Transform2d;
-import edu.wpi.first.wpilibj.geometry.Translation2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-
+/** Add your docs here. */
 public class Vision extends Subsystem {
-    public final PhotonCamera camera = new PhotonCamera("MyCamera");
+  private PhotonCamera _camera;
+  private List<PhotonTrackedTarget> _targets;
+  private PhotonTrackedTarget _target;
+  private boolean _hasTargets;
+  private PIDController _controller;
+  private PhotonPipelineResult _result;
+  // Put methods for controlling this subsystem
+  // here. Call these from Commands.
+  public Vision(PhotonCamera camera) {
+     // photonvision.local:5800
 
-    
-    public Vision() {
-    //  PhotonPipelineResult result = camera.getLatestResult();
+     _camera = camera;
+     // Set driver mode to on.
+    _camera.setDriverMode(true);
 
+    // Change pipeline to 2
+    _camera.setPipelineIndex(2);
 
-    //  List<PhotonTrackedTarget> targets = result.getTargets();
-    //  PhotonTrackedTarget target = targets.get(0);
+    updateTargets();
 
-    //  // Get the yaw, pitch, and area from the camera.
-    //  double yaw = camera.getBestTargetYaw();
-    //  double pitch = camera.getBestTargetPitch();
-    //  double area = camera.getBestTargetArea();
+    _controller = new PIDController(.1, 0, 0);
+  }
 
-     
-    //     camera.setDriverMode(true);
-    //     camera.setPipelineIndex(2);
+  /* STANDARD FUNCTIONS */
+  public void updateTargets() {
+    // Get the latest pipeline result.
+    _result = _camera.getLatestResult();
 
-    //     // Check if the latest result has any targets.
-    //     boolean hasTargets = result.hasTargets();
+    // Check if the latest result has any targets.
+    _hasTargets = _result.hasTargets();
 
-    //     // Get a list of currently tracked targets.
-    //     // Get the pipeline latency.
-    //     double latencySeconds = result.getLatencyMillis() / 1000.0;
+    // Get a list of currently tracked targets.
+    _targets = _result.getTargets();
 
-    //     // Get information from target.
-    //     double targetYaw = target.getYaw();
-    //     double targetPitch = target.getPitch();
-    //     double targetArea = target.getArea();
-    //     double targetSkew = target.getSkew();
-    //     Transform2d pose = target.getCameraToTarget();
-    //     // Pose2d pose = target.getRobotRelativePose();
+    // Get the current best target.
+    _target = _result.getBestTarget();
 
+    // Get the pipeline latency.
+    // double latencySeconds = getLatencyMillis() / 1000.0; // around 3 ms
 
-    //     // Get distance to target.
-    //     double distanceMeters = PhotonUtils.calculateDistanceToTargetMeters(
-    //             Constants.Vision.kCameraHeight, Constants.Vision.kTargetHeight, 
-    //             Constants.Vision.kCameraPitch, Math.toRadians(camera.getBestTargetPitch()));
-    //     //Calculate a translation from the camera to the target.
-    //      Translation2d translation = PhotonUtils.estimateTargetTranslation2d(
-    //          distanceMeters, Rotation2d.fromDegrees(-camera.getBestTargetYaw()));
+    // Blink the LEDs.
+    _camera.setLED(LEDMode.kOff);
+  }
 
+  public void periodic() {
+    SmartDashboard.putNumber("Yaw", getYaw());
+    SmartDashboard.putNumber("Pitch", getPitch());
+    SmartDashboard.putNumber("Area", getArea());
+    SmartDashboard.putNumber("Skew", getSkew());
+  }
 
+  public double getYaw() {
+    double yaw = _target.getYaw();
+    return yaw;
+  }
 
-    }
-    
-     public double getTargetYaw() {
-        //  PhotonPipelineResult result = camera.getLatestResult();
-        //  List<PhotonTrackedTarget> targets = result.getTargets();
-        //  if (!targets.isEmpty()) {
-        //     PhotonTrackedTarget target = targets.get(0);
+  public double getPitch() {
+    double pitch = _target.getPitch();
+    return pitch;
+  }
 
-        //     double targetYaw = target.getYaw();
-            
-        //     return targetYaw;
-        //  }
-         return 0;
-     }  
+  public double getArea() {
+    double area = _target.getArea();
+    return area;
+  }
 
-     public double getTargetPitch() {
-         PhotonPipelineResult result = camera.getLatestResult();
-         List<PhotonTrackedTarget> targets = result.getTargets();
-         if (!targets.isEmpty()) {
-            PhotonTrackedTarget target = targets.get(0);
+  public double getSkew() {
+    double skew = _target.getSkew();
+    return skew;
+  }
 
-            double targetPitch = target.getPitch();
-            
-            return targetPitch;
-         }
-         return 0;
-     }  
+  public Transform2d getPose() {
+    Transform2d pose = _target.getCameraToTarget();
+    return pose;
+  }
+  /* ****************** */
 
-     public boolean hasTargets() {
-         PhotonPipelineResult result = camera.getLatestResult();
+  /* TO BE USED FOR COMMANDS */
+  public double getRotationSpeed() {
+    updateTargets();
+    double rotationSpeed = _controller.calculate(_result.getBestTarget().getYaw(), 0);
+    return rotationSpeed;
+  }
 
-         boolean hasTargets = result.hasTargets();
-
-     return hasTargets;
-     }
-
-     @Override
-     protected void initDefaultCommand() {
-         // TODO Auto-generated method stub
-
-     }
-
-} 
+  @Override
+  public void initDefaultCommand() {
+    // Set the default command for a subsystem here.
+    // setDefaultCommand(new MySpecialCommand());
+  }
+}

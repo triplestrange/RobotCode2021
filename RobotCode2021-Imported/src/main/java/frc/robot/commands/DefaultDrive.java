@@ -90,7 +90,6 @@ public class DefaultDrive extends Command {
 
     double curHead = m_drive.getAngle().getDegrees();
 
-    double difference =  heading - curHead;
 
     if (m_rot == 0) {
       m_drive.drive(m_xSpeed, m_ySpeed, pid.calculate(curHead, heading), m_fieldRelative);
@@ -98,6 +97,12 @@ public class DefaultDrive extends Command {
     } else {
       m_drive.drive(m_xSpeed, m_ySpeed, m_rot, m_fieldRelative);
       heading = m_drive.getAngle().getDegrees();
+    }
+
+    // fill with correct button
+    if (m_joystick.getRawButtonPressed(6)) {
+      // to zero all wheels
+      
     }
 
   }
