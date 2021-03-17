@@ -64,7 +64,9 @@ public class RobotContainer {
     public final static Shooter shooter = new Shooter();
     private final Climb climb = new Climb();
     private final PhotonCamera camera = new PhotonCamera("TurretCamera");
+    private final PhotonCamera camera1 = new PhotonCamera("OtherCamera");
     private final Vision vision = new Vision(camera);
+    private final Vision vision1 = new Vision(camera1);
     private final Turret turret = new Turret(swerveDrive);
     // The driver's controller
     public static Joystick m_driverController = new Joystick(OIConstants.kDriverControllerPort);
@@ -136,23 +138,21 @@ public class RobotContainer {
         // JoystickButton ok = new JoystickButton(m_driverController, 7);
 
         BarrelPath Barrel = new BarrelPath(swerveDrive, theta);
-    
         SmartDashboard.putData(Scheduler.getInstance());
         SmartDashboard.putData("Barrel Path", Barrel);
 
-        
         BouncePath Bounce = new BouncePath(swerveDrive, theta);
-    
         SmartDashboard.putData(Scheduler.getInstance());
         SmartDashboard.putData("Bounce Path", Bounce);
 
-
-        
         SlalomPath1 Slolam = new SlalomPath1(swerveDrive, theta);
     
         SmartDashboard.putData(Scheduler.getInstance());
         SmartDashboard.putData("Slalom Path", Slolam);
 
+        GalacticPathA galA = new GalacticPathA(swerveDrive, intake, theta);
+        SmartDashboard.putData(Scheduler.getInstance());
+        SmartDashboard.putData("GalacticA", galA);
 
         // A button 
         butA.whileHeld(new ExtendIntake(intake, m_operatorController));
@@ -216,7 +216,7 @@ public static String getCoords() {
         GalacticA galA = new GalacticA(swerveDrive, theta);
 
         return galA;
-
+        
     }
 
 }

@@ -7,6 +7,7 @@ package frc.robot.commands.Auto;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.InstantCommand;
+import edu.wpi.first.wpilibj.command.Scheduler;
 
 import java.util.List;
 
@@ -25,44 +26,55 @@ import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.SwerveDriveConstants;
 import frc.robot.subsystems.*;
 
+
 public class GalacticA extends CommandGroup {
         /** Add your docs here. */
+
+        private final RobotContainer m_robotContainer;
+        // private final Intake m_intake;
+        
         public GalacticA(SwerveDrive swerveDrive, ProfiledPIDController theta) {
+                m_robotContainer = new RobotContainer();
+                Intake m_intake = new Intake();
 
-                final RobotContainer m_robotContainer;
-                final Intake intake;
+                
+         // Create config for trajectory
 
-                // Create config for trajectory
-                TrajectoryConfig config = new TrajectoryConfig(2.1,
-                                AutoConstants.kMaxAccelerationMetersPerSecondSquared)
-                                                // Add kinematics to ensure max speed is actually obeyed
-                                                // .setKinematics(SwerveDriveConstants.kDriveKinematics)
-                                                .setEndVelocity(1.5);
+         //top speed: 2.1
+        TrajectoryConfig config = new TrajectoryConfig(.5,
+                AutoConstants.kMaxAccelerationMetersPerSecondSquared)
+                // Add kinematics to ensure max speed is actually obeyed
+                // .setKinematics(SwerveDriveConstants.kDriveKinematics)
 
-                Trajectory trajectory = TrajectoryGenerator
-                                .generateTrajectory(new Pose2d(0, 0, new Rotation2d(-Math.PI / 2)), List.of(
+                //change to 1.5
+                .setEndVelocity(.5);
 
-                                ),
-                                                // direction robot moves
-                                                new Pose2d(0, -3, new Rotation2d(Math.PI / 2)), config);
+        Trajectory trajectory = TrajectoryGenerator
+               .generateTrajectory(new Pose2d(0, 0, new Rotation2d(0)), List.of(
 
-                SwerveControllerCommand swerveControllerCommand1 = new SwerveControllerCommand(trajectory, (0),
-                                swerveDrive::getPose, // Functional interface to feed supplier
-                                SwerveDriveConstants.kDriveKinematics,
+                ),
+                                   // direction robot moves
+                new Pose2d(0, -3, new Rotation2d(0)), config);
 
-                                // Position controllers
-                                new PIDController(AutoConstants.kPXController, 1, AutoConstants.kDXController),
-                                new PIDController(AutoConstants.kPYController, 1, AutoConstants.kDYController), theta,
+        SwerveControllerCommand swerveControllerCommand1 = new SwerveControllerCommand(trajectory, (0),
+                swerveDrive::getPose, // Functional interface to feed supplier
+                SwerveDriveConstants.kDriveKinematics,
+                
+                // Position controllers
+                new PIDController(AutoConstants.kPXController, 1, AutoConstants.kDXController),
+                new PIDController(AutoConstants.kPYController, 1, AutoConstants.kDYController), theta,
+                swerveDrive::setModuleStates,
+                swerveDrive
+        );
+        
+                m_intake.extendAuto();
+                m_intake.runWheelsAuto();
+                
+                IntakeCommand intakeCommand = new IntakeCommand(m_intake);
+                
 
-                                swerveDrive::setModuleStates,
-
-                                swerveDrive
-
-                );
-
-                addSequential(swerveControllerCommand1);
-               
+                addParallel(swerveControllerCommand1);
+                addSequential(intakeCommand);
 
         }
-
 }

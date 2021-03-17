@@ -178,6 +178,7 @@ public class SwerveDrive extends Subsystem {
    */
   public void zeroHeading() {
     navX.reset();
+    resetEncoders();
     gyroReset = true;
   }
 
