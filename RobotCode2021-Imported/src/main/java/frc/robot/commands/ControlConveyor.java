@@ -16,10 +16,10 @@ public class ControlConveyor extends CommandGroup {
   /**
    * Creates a new ControlConveyor.
    */
-  public ControlConveyor(Conveyor subsystem) {
+  public ControlConveyor(Conveyor subsystem, double speed) {
     requires(subsystem);
     m_conveyor = subsystem;
-    m_speed = 1;
+    m_speed = speed;
     // Use addRequirements() here to declare subsystem dependencies.
   }
 

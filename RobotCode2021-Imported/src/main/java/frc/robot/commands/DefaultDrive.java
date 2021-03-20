@@ -112,7 +112,6 @@ public class DefaultDrive extends Command {
     // fill with correct button
     if (m_joystick.getRawButtonPressed(6)) {
       // to zero all wheels
-      SmartDashboard.putNumber("BUTTON PRESSED", 5);
     }
 
     // sidestep
