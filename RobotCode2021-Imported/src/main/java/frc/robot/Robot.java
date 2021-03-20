@@ -55,6 +55,7 @@ public class Robot extends TimedRobot {
   @Override
   public void robotPeriodic() {
     Scheduler.getInstance().run();
+    SmartDashboard.putString("SCHEDULER STATUS", Scheduler.getInstance().getClass().toString());
     // SmartDashboard.putNumber("hoodEncoder", hoodEncoder.getPosition());
     // SmartDashboard.putNumber("hoodVoltage", hoodEncoder.getBusVoltage());
   }

@@ -23,8 +23,12 @@ public class DefaultDrive extends Command {
   private final boolean m_fieldRelative;
   private double heading;
   private PIDController pid = new PIDController(0.05, 0, 0.01);
+  private PIDController visionController = new PIDController(.1, 0, 0);
   private JoystickButton butX;
   private boolean slow;
+  private int mode;
+  private double multiplier;
+  private Vision m_vision;
 
   /**
    * Creates a new DefaultDrive.
@@ -32,31 +36,31 @@ public class DefaultDrive extends Command {
    * @param subsystem The drive subsystem this command will run on
    * @param driver The joystick to be used for calculations in speed and rotation
    */
-  public DefaultDrive(SwerveDrive subsystem, Joystick driver, boolean slow) {
-    requires(subsystem);
+  public DefaultDrive(SwerveDrive subsystem1, Vision subsystem2, Joystick driver, double multiplier) {
+    requires(subsystem1);
+    requires(subsystem2);
     // Use addRequirements() here to declare subsystem dependencies.
-    m_drive = subsystem;
+    m_drive = subsystem1;
+    m_vision = subsystem2;
     m_joystick = driver;
     m_xSpeed = 0;
     m_ySpeed = 0;
     m_rot = 0;
     m_fieldRelative = true;
-    this.slow = slow;
-
+    this.multiplier = multiplier;
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
     heading = m_drive.getAngle().getDegrees();
-    butX = new JoystickButton(m_joystick, 2);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
     // deadzone
-
+    SmartDashboard.putNumber("MODE", mode);
     if (m_drive.getGyroReset()) {
       heading = m_drive.getAngle().getDegrees();
       m_drive.setGyroReset(false);
@@ -66,7 +70,9 @@ public class DefaultDrive extends Command {
     m_ySpeed = 0;
     m_rot = 0;
 
-    if (!slow) {
+    if (!(m_joystick.getRawButtonPressed(1))) {
+    // y should be 0 when robot is facing ^ (and intake is facing driver station)
+    // x should be negative when intake facing driver station %
     if (Math.abs(m_joystick.getRawAxis(0)) > 0.1) {
       m_ySpeed = m_joystick.getRawAxis(0) * 0.5 * Constants.SwerveDriveConstants.kMaxSpeedMetersPerSecond;
     }
@@ -102,7 +108,14 @@ public class DefaultDrive extends Command {
     // fill with correct button
     if (m_joystick.getRawButtonPressed(6)) {
       // to zero all wheels
-      
+      SmartDashboard.putNumber("BUTTON PRESSED", 5);
+    }
+  }
+    // A - for vision
+    else {
+      m_vision.updateTargets();
+      double rot = visionController.calculate(m_vision.getYaw(), 0);
+      m_drive.drive(0, 0, m_rot, m_fieldRelative);
     }
 
   }

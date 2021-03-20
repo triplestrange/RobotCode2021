@@ -53,13 +53,11 @@ public class RobotContainer {
     private final Climb climb = new Climb();
     private final PhotonCamera camera = new PhotonCamera("TurretCamera");
     private final Vision vision = new Vision(camera);
-    private final Turret turret = new Turret(swerveDrive);
-
+    private final Turret turret = new Turret();
     // The driver's controller
     public static Joystick m_driverController = new Joystick(OIConstants.kDriverControllerPort);
     public static Joystick m_operatorController = new Joystick(1);
 
-//     public static final GenericHID.RumbleType kLeftRumble = 1;
 
 
     public static ProfiledPIDController theta = new ProfiledPIDController(AutoConstants.kPThetaController, 0, 0,
@@ -79,10 +77,11 @@ public class RobotContainer {
 
         // Configure default commands
         // Set the default drive command to split-stick arcade drive
-        swerveDrive.setDefaultCommand(new DefaultDrive(swerveDrive, m_driverController, false));
+        swerveDrive.setDefaultCommand(new DefaultDrive(swerveDrive, vision, m_driverController, 1));
         conveyor.setDefaultCommand(new AutoIndexConveyor(conveyor));
         intake.setDefaultCommand(new RunIntake(intake, m_operatorController));
-        turret.setDefaultCommand(new SpinTurret(turret, false, 0));
+        turret.setDefaultCommand(new SpinTurret(turret, swerveDrive, vision, 2, 0));
+
     }
 
     /**
@@ -95,15 +94,48 @@ public class RobotContainer {
     private void configureButtonBindings() {
         JoystickButton butA = new JoystickButton(m_operatorController, 1);
         JoystickButton butB = new JoystickButton(m_operatorController, 2); 
-        JoystickButton butY = new JoystickButton(m_operatorController, 3);
-        JoystickButton butpress = new JoystickButton(m_driverController, 8); 
-        JoystickButton butXd = new JoystickButton(m_driverController, 8);       
+        JoystickButton butX = new JoystickButton(m_operatorController, 3);
+        
+        JoystickButton butXd = new JoystickButton(m_driverController, 3);  
+        JoystickButton butAd = new JoystickButton(m_driverController, 1);  
+        JoystickButton butBd = new JoystickButton(m_driverController, 2);
+
+        JoystickButton gyro = new JoystickButton(m_driverController, 8);
+
         JoystickButton rBump = new JoystickButton(m_operatorController, 6);
         JoystickButton lBump = new JoystickButton(m_operatorController, 5);
         JoystickButton lAnal = new JoystickButton(m_operatorController, 9);
         JoystickButton rAnal = new JoystickButton(m_operatorController, 10);
-        JoystickButton gyro = new JoystickButton(m_driverController, 7);
+
+        // B
+        JoystickButton turbo = new JoystickButton(m_driverController, 2);
+        // JoystickButton ok = new JoystickButton(m_driverController, 7);
+
+        BarrelPath Barrel = new BarrelPath(swerveDrive, theta);
+    
+        SmartDashboard.putData(Scheduler.getInstance());
+        SmartDashboard.putData("Barrel Path", Barrel);
+
+        // GalacticA galA = new GalacticA(swerveDrive, theta);
+    
+        SmartDashboard.putData(Scheduler.getInstance());
+        // SmartDashboard.putData("GalacticA", galA);
+
+
+        BouncePath Bounce = new BouncePath(swerveDrive, theta);
+    
+        SmartDashboard.putData(Scheduler.getInstance());
+        SmartDashboard.putData("Bounce Path", Bounce);
+
         
+        SlalomPath1 Slalom = new SlalomPath1(swerveDrive, theta);
+    
+        SmartDashboard.putData(Scheduler.getInstance());
+        SmartDashboard.putData("Slalom Path", Slalom);
+
+        SideStep SideStep = new SideStep(swerveDrive, theta);
+        butAd.whenPressed(SideStep);
+
 
         // A button
         butA.whileHeld(new ExtendIntake(intake, m_operatorController));
@@ -114,40 +146,39 @@ public class RobotContainer {
         // right bumper
         rBump.whileHeld(new RunShooter(shooter));
         rBump.whenReleased(new StopShooter(shooter));
-        
+        rBump.whileHeld(new FeedShooter(conveyor, shooter));
+        rBump.whenReleased(new AutoIndexConveyor(conveyor));
+
+        // left bumper
+        lBump.whileHeld(new ControlConveyor(conveyor));
+        lBump.whenReleased(new AutoIndexConveyor(conveyor));
+
         // left analog center
-        lAnal.whileHeld(new MoveHood(shooter, -1));
-        
+        lAnal.whileHeld(new MoveHood(shooter, -1));   
 
         // right analog center
         rAnal.whileHeld(new MoveHood(shooter, 1));
         
-        // right bumper
-        rBump.whileHeld(new FeedShooter(conveyor, shooter));
-        rBump.whenReleased(new AutoIndexConveyor(conveyor));
         
-        // left bumper
-        lBump.whileHeld(new ControlConveyor(conveyor));
-        lBump.whenReleased(new AutoIndexConveyor(conveyor));
+        
         
         // B button
-        butB.whileHeld(new SpinTurret(turret, true, 0.25));
-        butB.whenReleased(new SpinTurret(turret, true, 0));
+        butB.whileHeld(new SpinTurret(turret, swerveDrive, vision, 1, 0.25));
         
         // Y button
-        butY.whileHeld(new SpinTurret(turret, true, -0.25));
-        butY.whenReleased(new SpinTurret(turret, true, 0));
+        butX.whileHeld(new SpinTurret(turret, swerveDrive, vision, 1, -0.25));
 
-        // driver X button
-        butXd.whileHeld(new DefaultDrive(swerveDrive, m_driverController, true));
+        // driver X button - slow
+        butXd.whileHeld(new DefaultDrive(swerveDrive, vision, m_driverController, 0.35));
+        butAd.whenPressed(new InstantCommand(swerveDrive::zeroWheels));
+
+        butBd.whenPressed(new SideStep(swerveDrive, theta));
+
+        
+        turbo.whileHeld(new DefaultDrive(swerveDrive, vision, m_driverController, 2));
 
         gyro.whenPressed(new InstantCommand(swerveDrive::zeroHeading));
 
-        //new JoystickButton(m_operatorController, 4).whenPressed(new RunCommand(() -> conveyor.manualControl(-), conveyor))
-        //        .whenReleased(new RunCommand(conveyor::autoIndex, conveyor));
-        // should be start button for camera to find target idk what number is so fix it
-        // new JoystickButton(m_operatorController, 7).whenHeld(new InstantCommand(turret::visionTurret, turret));
-        
 }
 
 public static String getCoords() {
@@ -159,74 +190,12 @@ public static String getCoords() {
      *
      * @return the command to run in autonomous
      */
-    public Command getAutonomousCommand() {
-        // Create config for trajectory
-        TrajectoryConfig config = new TrajectoryConfig(AutoConstants.kMaxSpeedMetersPerSecond,
-                AutoConstants.kMaxAccelerationMetersPerSecondSquared)
-                        // Add kinematics to ensure max speed is actually obeyed
-                        .setKinematics(SwerveDriveConstants.kDriveKinematics);
+    
+     public Command getAutonomousCommand(Trajectory trajectory) {
+        // GalacticA galA = new GalacticA(swerveDrive, theta);
+        BarrelPath bar = new BarrelPath(swerveDrive, theta);
 
-        // An example trajectory to follow. All units in meters.
-        // Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
-        // Start at the origin facing the +X direction
-        // new Pose2d(0, 0, new Rotation2d(0)),
-        // List.of(),
-        // End 3 meters straight ahead of where we started, facing forward
-        // new Pose2d(0, 3, new Rotation2d(0)), config);
-
-        Trajectory newTrajectory = TrajectoryGenerator.generateTrajectory(
-            new Pose2d(0, 0, new  Rotation2d(-Math.PI / 2)), List.of(
-                // keep in
-                new Translation2d(0, -1.2), // take out
-                new Translation2d(1.1, -1.9),
-                new Translation2d(1.88, -1.9),
-             
-             
-                //new Translation2d(1.88, -3.5),
-                //new Translation2d(1.88, -4),
-             // keep in
-                new Translation2d(1.88, -5.5),
-                new Translation2d(1.88, -6.25),
-                new Translation2d(0.3, -6.31),
-                new Translation2d(0.3, -7.9)
-      
-      
-        // previously commented out
-                //new Translation2d(1.324, -7.9),
-                //new Translation2d(1.724, -7.9),
-                // new Translation2d(1.6, -7.75),
-                // new Translation2d(1.6, -6.55),
-                // new Translation2d(0, -6.3)
-                //new Translation2d(1.78, -7.75)
-            ), 
-
-           new Pose2d(1.88, -7.75, new Rotation2d(-Math.PI / 2)), config);
-        //    new Pose2d(0, -7, new Rotation2d(-Math.PI / 2)), config);
-
-
-
-        SwerveControllerCommand swerveControllerCommand1 = new SwerveControllerCommand(Slalom.getTrajectory(),
-                (-Math.PI / 2), swerveDrive::getPose, // Functional interface to feed supplier
-                SwerveDriveConstants.kDriveKinematics,
-
-                // Position controllers
-                new PIDController(AutoConstants.kPXController, 0, 0),
-                new PIDController(AutoConstants.kPYController, 0, 0), theta,
-
-                swerveDrive::setModuleStates,
-
-                swerveDrive
-
-        );
-
-        // Command shootCommand = new Command(() -> shooter.runHood(.5), shooter)
-        //                         .andThen(shooter::runShooter, shooter)
-        //                         .andThen(new RunCommand(() -> conveyor.feedShooter(0.75, shooter.atSpeed()), conveyor))
-        //                         .withTimeout(15).andThen(new InstantCommand(shooter::stopShooter, shooter));
-
-        
-
-        // return swerveControllerCommand1;
+        return bar;
 
         return swerveControllerCommand1;
     }
