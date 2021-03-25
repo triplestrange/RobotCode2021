@@ -118,7 +118,8 @@ public class Turret extends Subsystem {
     if (mode == 1)
       turretMotor.set(speed);
      else if (mode == 2) {
-       setPosition(0);
+       
+       setPosition(targetPosition);
      } else if (mode == 3) {
        // vision stuff
      }
