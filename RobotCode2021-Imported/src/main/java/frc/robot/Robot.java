@@ -58,8 +58,8 @@ public class Robot extends TimedRobot {
     xEntry = table.getEntry("X");
     yEntry = table.getEntry("Y");
     
-    RobotContainer.swerveDrive.zeroHeading();
-    }
+
+  }
 
   @Override
   public void robotPeriodic() {
@@ -164,7 +164,7 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
-    RobotContainer.swerveDrive.zeroHeading();
+    // RobotContainer.swerveDrive.zeroHeading();
   }
 
   double x = 0;
