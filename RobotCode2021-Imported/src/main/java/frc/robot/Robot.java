@@ -58,7 +58,7 @@ public class Robot extends TimedRobot {
     xEntry = table.getEntry("X");
     yEntry = table.getEntry("Y");
     
-    
+    RobotContainer.swerveDrive.zeroHeading();
     }
 
   @Override
