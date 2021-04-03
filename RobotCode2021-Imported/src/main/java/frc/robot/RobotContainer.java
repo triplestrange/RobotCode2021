@@ -96,7 +96,7 @@ public class RobotContainer {
         swerveDrive.setDefaultCommand(new DefaultDrive(swerveDrive, m_driverController, 1));
         conveyor.setDefaultCommand(new AutoIndexConveyor(conveyor));
         intake.setDefaultCommand(new RunIntake(intake, m_operatorController));
-        turret.setDefaultCommand(new SpinTurret(turret, vision, 2, 0));
+        turret.setDefaultCommand(new SpinTurret(turret, vision, 1, 0));
         vision.setDefaultCommand(new RunVision(vision));
 
     }
@@ -159,9 +159,9 @@ public class RobotContainer {
         SmartDashboard.putData(Scheduler.getInstance());
         SmartDashboard.putData("Bounce Path", Bounce);
         
-        SlalomPath1 Slolam = new SlalomPath1(swerveDrive, theta);
+        SlalomPath1 Slalom = new SlalomPath1(swerveDrive, theta);
         SmartDashboard.putData(Scheduler.getInstance());
-        SmartDashboard.putData("Slalom Path", Slolam);
+        SmartDashboard.putData("Slalom Path", Slalom);
 
         AccuracyChallenge accuracyChallenge1 = new AccuracyChallenge(swerveDrive, intake, theta);
         SmartDashboard.putData(Scheduler.getInstance());
@@ -195,9 +195,9 @@ public static String getCoords() {
      */
     
      public Command getAutonomousCommand(Trajectory trajectory) {
-        GalacticPathA galA = new GalacticPathA(swerveDrive, intake, theta);
+        BarrelPath bar = new BarrelPath(swerveDrive, theta);
 
-        return galA;
+        return bar;
         
     }
 

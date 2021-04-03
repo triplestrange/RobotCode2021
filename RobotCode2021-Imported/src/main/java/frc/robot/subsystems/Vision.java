@@ -49,12 +49,14 @@ public class Vision extends Subsystem {
     if (_hasTargets) {
     // Get a list of currently tracked targets.
     _targets = _result.getTargets();
+    SmartDashboard.putBoolean("TARGET ACQUIRED", true);
 
     // Get the current best target.
     _target = _result.getBestTarget();
     } else {
       _targets = null;
       _target = null;
+      SmartDashboard.putBoolean("TARGET ACQUIRED", false);
     }
 
     // Get the pipeline latency.
@@ -82,10 +84,9 @@ public class Vision extends Subsystem {
   public double getPitch() {
     if (_target != null) {
     double pitch = _target.getPitch();
-    SmartDashboard.putNumber("Pitch", pitch);
     return pitch;
     }
-    return 0.0;
+    return 11.0;
   }
 
   public double getArea() { 

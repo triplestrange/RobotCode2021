@@ -31,7 +31,7 @@ public class BarrelPath extends CommandGroup {
               AutoConstants.kMaxAccelerationMetersPerSecondSquared)
                       // Add kinematics to ensure max speed is actually obeyed
                       // .setKinematics(SwerveDriveConstants.kDriveKinematics)
-                      .setEndVelocity(1.5);
+                      .setEndVelocity(2);
 
 //       TrajectoryConfig config1 = new TrajectoryConfig(1,
 //               AutoConstants.kMaxAccelerationMetersPerSecondSquared)
@@ -47,12 +47,12 @@ public class BarrelPath extends CommandGroup {
           new Translation2d(-1.63, -3.224939),
           new Translation2d(-1.663700, -1.846359),
           new Translation2d(-.180766, -1.846359),
-          new Translation2d(-.180766, -5.230811),
+          new Translation2d(-.180766, -5.030811),
           new Translation2d(1.439370, -5.430811),
           new Translation2d(1.439370, -3.995877),
           new Translation2d(-1.827272, -3.995877),
           new Translation2d(-1.827272, -6.816515),
-          new Translation2d(0.15, -6.816515)
+          new Translation2d(0, -6.816515)
 
 
       ), 

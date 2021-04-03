@@ -5,6 +5,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.command.InstantCommand;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.subsystems.Vision;
 
 /** Add your docs here. */
@@ -21,5 +22,6 @@ public class RunVision extends InstantCommand {
   @Override
   protected void initialize() {
     vision.updateTargets();
+    SmartDashboard.putNumber("PITCH", vision.getPitch());
   }
 }

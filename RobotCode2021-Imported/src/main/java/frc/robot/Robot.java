@@ -78,8 +78,8 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
-    RobotContainer.swerveDrive.resetOdometry(new Pose2d(0, 0, new Rotation2d(-Math.PI / 2))); //0.053, .8539
-    RobotContainer.theta.reset(-Math.PI / 2);
+    RobotContainer.swerveDrive.resetOdometry(new Pose2d(0, 0, new Rotation2d(0))); //0.053, .8539
+    RobotContainer.theta.reset(0);
     
     
     try {
@@ -111,7 +111,7 @@ public class Robot extends TimedRobot {
     //         DriverStation.reportError("Unable to open trajectory" + trajectoryJSON, ex.getStackTrace());
     //     }
 
-
+//enable for autos not on smart dashboard (barrel, bounce, slalom)
     // m_autonomousCommand = m_robotContainer.getAutonomousCommand(null);
 
     // schedule the autonomous command (example)

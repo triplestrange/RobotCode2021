@@ -31,22 +31,22 @@ public class SlalomPath1 extends CommandGroup {
               AutoConstants.kMaxAccelerationMetersPerSecondSquared)
                       // Add kinematics to ensure max speed is actually obeyed
                       // .setKinematics(SwerveDriveConstants.kDriveKinematics)
-                      .setEndVelocity(1.5);
+                      .setEndVelocity(2);
 
       TrajectoryConfig config1 = new TrajectoryConfig(2.2,
               AutoConstants.kMaxAccelerationMetersPerSecondSquared)
                       // Add kinematics to ensure max speed is actually obeyed
                       // .setKinematics(SwerveDriveConstants.kDriveKinematics)
-                      .setStartVelocity(1.5);
+                      .setStartVelocity(2);
 
                     
     
     Trajectory traject = TrajectoryGenerator.generateTrajectory(
       new Pose2d(0, 0, new  Rotation2d(0)), List.of(
           //start s-shape
-          new Translation2d(0, -1.1),
-          new Translation2d(1.1, -1.6),
-          new Translation2d(1.88, -1.9),
+          new Translation2d(-.25, -1.4),
+          new Translation2d(1.1, -1.7),
+          new Translation2d(1.88, -2),
 
 
           new Translation2d(1.9, -4),
@@ -66,11 +66,11 @@ public class SlalomPath1 extends CommandGroup {
      Trajectory traject1 = TrajectoryGenerator.generateTrajectory(
                                  //direction robot moves
       new Pose2d(-.5, -5.5, new  Rotation2d(Math.PI / 2)), List.of(
-          new Translation2d(-.5, -1.45),
-          new Translation2d(1.1, -1.5)
+          new Translation2d(-.5, -1.55),
+          new Translation2d(1.5, -1.65)
       ), 
       
-     new Pose2d(1.8, 0, new Rotation2d(Math.PI / 2)), config1);
+     new Pose2d(2.1, 0, new Rotation2d(Math.PI / 2)), config1);
   //    new Pose2d(0, -7, new Rotation2d(-Math.PI / 2)), config);
 
   // String  trajectoryJSON = "../paths/Slalom.wpilib.json";
