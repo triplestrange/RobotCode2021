@@ -136,8 +136,8 @@ public class RobotContainer {
         //shooter and conveyor move together
         butY.whileHeld(new RunShooter(shooter));
         butY.whenReleased(new StopShooter(shooter));
-        rBump.whileHeld(new ControlConveyor(conveyor, 1));
-        rBump.whenReleased(new ControlConveyor(conveyor, 0));
+        butY.whileHeld(new ControlConveyor(conveyor, 1));
+        butY.whenReleased(new ControlConveyor(conveyor, 0));
         lBump.whileHeld(new ControlConveyor(conveyor, -1));
         lBump.whenReleased(new ControlConveyor(conveyor, 0));
         
@@ -179,7 +179,7 @@ public class RobotContainer {
         // butBd.whenPressed(new SideStep(swerveDrive, theta));
 
         turbo.whileHeld(new DefaultDrive(swerveDrive, m_driverController, 2));
-
+        // butAd.whileHeld(new SpinTurret(turret, vision, 2, 0));
         gyro.whenPressed(new InstantCommand(swerveDrive::zeroHeading));
         
 }
@@ -195,9 +195,9 @@ public static String getCoords() {
      */
     
      public Command getAutonomousCommand(Trajectory trajectory) {
-        BarrelPath bar = new BarrelPath(swerveDrive, theta);
+        PowerPortChallenge ppc = new PowerPortChallenge(swerveDrive, intake, theta);
 
-        return bar;
+        return ppc;
         
     }
 

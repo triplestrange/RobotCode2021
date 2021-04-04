@@ -50,7 +50,7 @@ public class PowerPortChallenge extends CommandGroup {
 
   ), 
                        //direction robot moves
- new Pose2d(1.01, 0, new Rotation2d(-Math.PI / 2)), config);
+ new Pose2d(3.112242, 0, new Rotation2d(0)), config);
 
     SwerveControllerCommand swerveControllerCommand1 = new SwerveControllerCommand(traject, (0), swerveDrive::getPose, 
     // Functional
@@ -68,7 +68,7 @@ public class PowerPortChallenge extends CommandGroup {
 
     );
 
-    // addParallel(swerveControllerCommand1);
+    addSequential(swerveControllerCommand1);
     IntakeCommand intakeCommand = new IntakeCommand(intake);
     addSequential(intakeCommand);
   }
