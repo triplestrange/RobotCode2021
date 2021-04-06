@@ -130,14 +130,14 @@ public class RobotContainer {
 
         butA.whenPressed(new ExtendIntake(intake, m_operatorController));
         // butA.whenReleased(new RetractIntake(intake));
-        butB.whileHeld(new SpinTurret(turret, vision, 1, 0.25));
-        butX.whileHeld(new SpinTurret(turret, vision, 1, -0.25));
+        // butB.whileHeld(new SpinTurret(turret, vision, 1, 0.25));
+        // butX.whileHeld(new SpinTurret(turret, vision, 1, -0.25));
 
-        //shooter and conveyor move together
+        //shooter and conveyor move together *** change for PowerPortChallenges
         butY.whileHeld(new RunShooter(shooter));
         butY.whenReleased(new StopShooter(shooter));
-        butY.whileHeld(new ControlConveyor(conveyor, 1));
-        butY.whenReleased(new ControlConveyor(conveyor, 0));
+        rBump.whileHeld(new ControlConveyor(conveyor, 1));
+        rBump.whenReleased(new ControlConveyor(conveyor, 0));
         lBump.whileHeld(new ControlConveyor(conveyor, -1));
         lBump.whenReleased(new ControlConveyor(conveyor, 0));
         
@@ -163,9 +163,13 @@ public class RobotContainer {
         SmartDashboard.putData(Scheduler.getInstance());
         SmartDashboard.putData("Slalom Path", Slalom);
 
-        AccuracyChallenge accuracyChallenge1 = new AccuracyChallenge(swerveDrive, intake, theta);
+        // AccuracyChallenge accuracyChallenge1 = new AccuracyChallenge(swerveDrive, intake, shooter, theta);
+        // SmartDashboard.putData(Scheduler.getInstance());
+        // SmartDashboard.putData("Accuracy Challenge", accuracyChallenge1);
+
+        PowerPortChallenge ppcc = new PowerPortChallenge(swerveDrive, intake, shooter, theta);
         SmartDashboard.putData(Scheduler.getInstance());
-        SmartDashboard.putData("Accuracy Challenge", accuracyChallenge1);
+        SmartDashboard.putData("PowerPortChallenge", ppcc);
 
         GalacticPathA galA = new GalacticPathA(swerveDrive, intake, theta);
         SmartDashboard.putData(Scheduler.getInstance());
@@ -195,7 +199,7 @@ public static String getCoords() {
      */
     
      public Command getAutonomousCommand(Trajectory trajectory) {
-        PowerPortChallenge ppc = new PowerPortChallenge(swerveDrive, intake, theta);
+        PowerPortChallenge ppc = new PowerPortChallenge(swerveDrive, intake, shooter, theta);
 
         return ppc;
         

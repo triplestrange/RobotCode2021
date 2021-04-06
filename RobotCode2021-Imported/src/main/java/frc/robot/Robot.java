@@ -112,7 +112,7 @@ public class Robot extends TimedRobot {
     //     }
 
 //enable for autos not on smart dashboard (barrel, bounce, slalom)
-    // m_autonomousCommand = m_robotContainer.getAutonomousCommand(null);
+    m_autonomousCommand = m_robotContainer.getAutonomousCommand(null);
 
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {

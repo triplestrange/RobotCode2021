@@ -4,8 +4,8 @@
 
 package frc.robot.commands.Auto;
 
-import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.CommandGroup;
+import edu.wpi.first.wpilibj.command.WaitCommand;
 
 import java.util.List;
 
@@ -18,58 +18,91 @@ import edu.wpi.first.wpilibj.trajectory.TrajectoryGenerator;
 import frc.robot.commands.*;
 import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.controller.ProfiledPIDController;
-import frc.robot.RobotContainer;
+
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.SwerveDriveConstants;
 import frc.robot.subsystems.*;
 
 public class PowerPortChallenge extends CommandGroup {
   /** Add your docs here. */
+
   private final SwerveDrive swerveDrive;
   private final Intake intake;
+  private final Shooter shoot;
 
-  public PowerPortChallenge(SwerveDrive swerveDrive, Intake intake, ProfiledPIDController theta) {
-    // private final Intake m_intake;
+  public PowerPortChallenge(SwerveDrive swerveDrive, Intake intake, Shooter shoot, ProfiledPIDController theta) {
     requires(swerveDrive);
+    requires(shoot);
     requires(intake);
 
     this.swerveDrive =  swerveDrive;
     this.intake =  intake;
-    // Create config for trajectory
-    // top speed: 2.1
-    TrajectoryConfig config = new TrajectoryConfig(.5, AutoConstants.kMaxAccelerationMetersPerSecondSquared)
-        // Add kinematics to ensure max speed is actually obeyed
-        // .setKinematics(SwerveDriveConstants.kDriveKinematics)
-        // set end: 1.5
-        .setEndVelocity(.5);
+    this.shoot = shoot;
+
+      // Create config for trajectory
+      TrajectoryConfig config = new TrajectoryConfig(1,
+              AutoConstants.kMaxAccelerationMetersPerSecondSquared)
+                      // Add kinematics to ensure max speed is actually obeyed
+                      // .setKinematics(SwerveDriveConstants.kDriveKinematics)
+                      .setEndVelocity(0);
 
     Trajectory traject = TrajectoryGenerator.generateTrajectory(
-      
-    new Pose2d(0, 0, new  Rotation2d(0)), List.of(
-     
+      new Pose2d(0, 0, new  Rotation2d(-Math.PI / 2)), List.of(), 
 
-  ), 
-                       //direction robot moves
- new Pose2d(3.112242, 0, new Rotation2d(0)), config);
+                           //direction robot moves
+     new Pose2d(-2, 0, new Rotation2d(-Math.PI / 2)), config);     
 
-    SwerveControllerCommand swerveControllerCommand1 = new SwerveControllerCommand(traject, (0), swerveDrive::getPose, 
-    // Functional
-    // feed
-    // supplier
-        SwerveDriveConstants.kDriveKinematics,
+  SwerveControllerCommand swerveControllerCommand1 = new SwerveControllerCommand(traject,
+          (0), swerveDrive::getPose, // Functional interface to feed supplier
+          SwerveDriveConstants.kDriveKinematics,
 
-        // Position controllers
-        new PIDController(AutoConstants.kPXController, 1, AutoConstants.kDXController),
-        new PIDController(AutoConstants.kPYController, 1, AutoConstants.kDYController), theta,
+          // Position controllers
+          new PIDController(AutoConstants.kPXController, 1, AutoConstants.kDXController),
+          new PIDController(AutoConstants.kPYController, 1, AutoConstants.kDYController), theta,
 
-        swerveDrive::setModuleStates,
+          swerveDrive::setModuleStates,
 
-        swerveDrive
+          swerveDrive
 
-    );
+  );
 
-    addSequential(swerveControllerCommand1);
-    IntakeCommand intakeCommand = new IntakeCommand(intake);
-    addSequential(intakeCommand);
+  TrajectoryConfig config2 = new TrajectoryConfig(1,
+  AutoConstants.kMaxAccelerationMetersPerSecondSquared)
+          // Add kinematics to ensure max speed is actually obeyed
+          // .setKinematics(SwerveDriveConstants.kDriveKinematics)
+          .setStartVelocity(1);
+
+Trajectory traject2 = TrajectoryGenerator.generateTrajectory(
+new Pose2d(0, 0, new  Rotation2d(-Math.PI / 2)), List.of(), 
+
+               //direction robot moves
+new Pose2d(-2, 0, new Rotation2d(-Math.PI / 2)), config);     
+
+SwerveControllerCommand swerveControllerCommand2 = new SwerveControllerCommand(traject,
+(0), swerveDrive::getPose, // Functional interface to feed supplier
+SwerveDriveConstants.kDriveKinematics,
+
+// Position controllers
+new PIDController(AutoConstants.kPXController, 1, AutoConstants.kDXController),
+new PIDController(AutoConstants.kPYController, 1, AutoConstants.kDYController), theta,
+
+swerveDrive::setModuleStates,
+
+swerveDrive
+
+);
+WaitCommand wait = new WaitCommand(15);
+IntakeCommand intakeCommand = new IntakeCommand(intake);
+RunShooter runShoot = new RunShooter(shoot);
+
+  addParallel(intakeCommand);
+  addSequential(swerveControllerCommand1);
+  // addSequential(wait);
+  // addSequential(swerveControllerCommand2);
+  // addSequential(wait);
+  // addSequential(swerveControllerCommand1);
+  // addSequential(wait);
+  // addSequential(swerveControllerCommand2);
+  // addSequential(wait);
   }
 }
