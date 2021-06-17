@@ -70,6 +70,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
+<<<<<<< Updated upstream
     RobotContainer.swerveDrive.resetOdometry(new Pose2d(0, 0, new Rotation2d(-Math.PI / 2.)));
     RobotContainer.theta.reset(-Math.PI / 2.);
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
@@ -78,6 +79,10 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       Scheduler.getInstance().add(m_autonomousCommand);
     }
+=======
+    RobotContainer.swerveDrive.resetOdometry(new Pose2d(0, 0, new Rotation2d(Math.PI / 2))); //0.053, .8539
+    RobotContainer.theta.reset(Math.PI / 2);
+>>>>>>> Stashed changes
     
     try {
       f = new File("/home/lvuser/Output.txt");
